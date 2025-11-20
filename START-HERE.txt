@@ -1,0 +1,67 @@
+================================
+   Sathish PAUL SDB WEBSITE
+   React + Vite Version
+================================
+
+🎉 Your website has been converted to React!
+
+📋 QUICK START:
+───────────────
+
+1. Install Node.js from: https://nodejs.org
+
+2. Open PowerShell in this folder
+
+3. Run these commands:
+   
+   npm install
+   npm run dev
+
+4. Open browser: http://localhost:3000
+
+================================
+
+📸 MOVE YOUR IMAGES:
+
+Run in PowerShell:
+   move fr-sathish-paul.jpg public/
+   move gospel-toon-sample.jpg public/
+   move eucharist-sample.jpg public/
+
+================================
+
+📚 FULL DOCUMENTATION:
+   - Read: SETUP-INSTRUCTIONS.md
+   - Read: REACT-MIGRATION-GUIDE.md
+   - Read: README.md
+
+================================
+
+✅ WHAT'S INCLUDED:
+
+✓ 11 React Components
+✓ Vite for fast development
+✓ All animations & features
+✓ Responsive design
+✓ WhatsApp button
+✓ Lightbox gallery
+✓ Month navigation
+✓ Sacred Gallery
+
+================================
+
+🔥 BENEFITS:
+
+⚡ Hot reload - instant updates
+🧩 Component-based architecture
+🚀 Optimized production builds
+📱 Better mobile performance
+🔍 Easier debugging
+
+================================
+
+Need help? Contact:
+📧 sathishpauljsdb@gmail.com
+
+================================
+

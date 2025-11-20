@@ -1,0 +1,57 @@
+========================================
+   IMAGE UPLOAD INSTRUCTIONS
+========================================
+
+Please upload these images to your project folder:
+
+1. fr-sathish-paul.jpg
+   - Your photo from the screenshots (in white priest attire)
+   - This will appear in the Hero section at the top
+
+2. gospel-toon-sample.jpg
+   - Your Gospel Toon illustration (the 4th image you mentioned)
+   - Example: "Mary treasured up all these things and pondered them"
+   - This will be used for ALL months in both English & Tamil sections (for testing)
+
+3. eucharist-sample.jpg
+   - Your Eucharist image (the 3rd image you mentioned)
+   - Example: "In an ever changing world, the Holy Eucharist is a constant reminder..."
+   - This will be used for ALL categories in Sacred Gallery (for testing)
+
+4. logo.png (optional)
+   - Your custom logo
+   - Replace the placeholder "SP" logo in the header
+   - Update in index.html: line 20
+
+========================================
+   HOW TO UPLOAD
+========================================
+
+1. Save all images in the same folder as index.html
+2. Make sure filenames match exactly:
+   - fr-sathish-paul.jpg
+   - gospel-toon-sample.jpg
+   - eucharist-sample.jpg
+
+3. Refresh your browser (Ctrl+F5 or Cmd+Shift+R)
+
+========================================
+   CURRENTLY ACTIVE
+========================================
+
+✓ All sections are configured to use your real images
+✓ If images are not found, placeholders will appear automatically
+✓ All 365 days will show your sample Gospel Toon image
+✓ All 6 Sacred Gallery categories will show your Eucharist image
+
+========================================
+   FUTURE UPDATES
+========================================
+
+To add more images later:
+1. Update script.js line 208-234 for Sacred Gallery images
+2. Modify the generateGallery function for different images per day
+3. Add image arrays for each month/category
+
+========================================
+
