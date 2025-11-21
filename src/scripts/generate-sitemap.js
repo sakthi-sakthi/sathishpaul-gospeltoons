@@ -22,13 +22,6 @@ const routes = [
     '/catholic-designs',
 ];
 
-// Create a new XML document with the sitemap and image namespaces
-// This creates the root <urlset> element with proper XML declaration
-const urlset = create({ version: '1.0' }).ele('urlset', { 
-    xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9',
-    'xmlns:image': 'http://www.google.com/schemas/sitemap-image/1.1'
-});
-
 // Helper function to normalize image paths (ensure they start with /)
 const normalizeImagePath = (imagePath) => {
     if (!imagePath) return '';
@@ -55,30 +48,51 @@ try {
     console.warn('⚠️  Could not load gospel-data.json:', error.message);
 }
 
-// Loop through each route and add it to the sitemap with images
+// ============================================
+// Generate Text/Page Sitemap (sitemap.xml)
+// ============================================
+const textSitemap = create({ version: '1.0' }).ele('urlset', { 
+    xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9'
+});
+
+// Loop through each route and add it to the text sitemap (no images)
 routes.forEach(route => {
-    // Create a new <url> element for each route
-    const url = urlset.ele('url');
-    
-    // Add the full URL (base + route) as the <loc> element
+    const url = textSitemap.ele('url');
     url.ele('loc').txt(baseUrl + route);
-    
-    // Add the current date/time as the <lastmod> element in ISO format
     url.ele('lastmod').txt(new Date().toISOString());
+});
+
+// Write the text sitemap
+const textSitemapPath = path.join(publicDir, 'sitemap.xml');
+const textXml = textSitemap.end({ prettyPrint: true });
+fs.writeFileSync(textSitemapPath, textXml);
+console.log(`✅ Text sitemap generated: sitemap.xml (${routes.length} pages)`);
+
+// ============================================
+// Generate Image Sitemap (sitemap-images.xml)
+// ============================================
+const imageSitemap = create({ version: '1.0' }).ele('urlset', { 
+    xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9',
+    'xmlns:image': 'http://www.google.com/schemas/sitemap-image/1.1'
+});
+
+let totalImages = 0;
+
+// Helper function to collect images for a route
+const getImagesForRoute = (route) => {
+    const images = [];
     
-    // Add images based on the route
     if (route === '/catholic-designs') {
         // Add all images from galleryImages.json
         Object.keys(galleryImages).forEach(category => {
-            const images = galleryImages[category] || [];
-            images.forEach(image => {
+            const categoryImages = galleryImages[category] || [];
+            categoryImages.forEach(image => {
                 if (image.src) {
-                    const imageElement = url.ele('image:image');
-                    imageElement.ele('image:loc').txt(baseUrl + normalizeImagePath(image.src));
-                    if (image.title) {
-                        imageElement.ele('image:title').txt(image.title);
-                        imageElement.ele('image:caption').txt(image.title);
-                    }
+                    images.push({
+                        loc: baseUrl + normalizeImagePath(image.src),
+                        title: image.title || '',
+                        caption: image.title || ''
+                    });
                 }
             });
         });
@@ -88,12 +102,11 @@ routes.forEach(route => {
             const monthData = gospelData.english[month] || [];
             monthData.forEach(item => {
                 if (item.path) {
-                    const imageElement = url.ele('image:image');
-                    imageElement.ele('image:loc').txt(baseUrl + normalizeImagePath(item.path));
-                    if (item.name) {
-                        imageElement.ele('image:title').txt(item.name);
-                        imageElement.ele('image:caption').txt(item.name);
-                    }
+                    images.push({
+                        loc: baseUrl + normalizeImagePath(item.path),
+                        title: item.name || '',
+                        caption: item.name || ''
+                    });
                 }
             });
         });
@@ -103,42 +116,49 @@ routes.forEach(route => {
             const monthData = gospelData.tamil[month] || [];
             monthData.forEach(item => {
                 if (item.path) {
-                    const imageElement = url.ele('image:image');
-                    imageElement.ele('image:loc').txt(baseUrl + normalizeImagePath(item.path));
-                    if (item.name) {
-                        imageElement.ele('image:title').txt(item.name);
-                        imageElement.ele('image:caption').txt(item.name);
-                    }
+                    images.push({
+                        loc: baseUrl + normalizeImagePath(item.path),
+                        title: item.name || '',
+                        caption: item.name || ''
+                    });
                 }
             });
         });
     }
+    
+    return images;
+};
+
+// Loop through each route and add images
+routes.forEach(route => {
+    const images = getImagesForRoute(route);
+    
+    // Only add URL entry if it has images
+    if (images.length > 0) {
+        const url = imageSitemap.ele('url');
+        url.ele('loc').txt(baseUrl + route);
+        url.ele('lastmod').txt(new Date().toISOString());
+        
+        // Add all images for this route
+        images.forEach(image => {
+            totalImages++;
+            const imageElement = url.ele('image:image');
+            imageElement.ele('image:loc').txt(image.loc);
+            if (image.title) {
+                imageElement.ele('image:title').txt(image.title);
+                imageElement.ele('image:caption').txt(image.caption);
+            }
+        });
+    }
 });
 
-// Convert the XML object to a formatted string
-const xml = urlset.end({ prettyPrint: true });
+// Write the image sitemap
+const imageSitemapPath = path.join(publicDir, 'sitemap-images.xml');
+const imageXml = imageSitemap.end({ prettyPrint: true });
+fs.writeFileSync(imageSitemapPath, imageXml);
+console.log(`✅ Image sitemap generated: sitemap-images.xml (${totalImages} images)`);
 
-// Write the XML to the sitemap.xml file in the public directory
-const sitemapPath = path.join(publicDir, 'sitemap.xml');
-fs.writeFileSync(sitemapPath, xml);
-
-// Count total images
-let totalImages = 0;
-if (galleryImages) {
-    Object.keys(galleryImages).forEach(category => {
-        totalImages += (galleryImages[category] || []).length;
-    });
-}
-if (gospelData.english) {
-    Object.keys(gospelData.english).forEach(month => {
-        totalImages += (gospelData.english[month] || []).length;
-    });
-}
-if (gospelData.tamil) {
-    Object.keys(gospelData.tamil).forEach(month => {
-        totalImages += (gospelData.tamil[month] || []).length;
-    });
-}
-
-// Log a success message to the console
-console.log(`✅ Sitemap generated successfully with ${totalImages} images!`);
+// Log final success message
+console.log(`\n✅ Both sitemaps generated successfully!`);
+console.log(`   - sitemap.xml: ${routes.length} pages`);
+console.log(`   - sitemap-images.xml: ${totalImages} images`);
